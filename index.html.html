@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMCESA - Sistema de Gestión Empresarial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsOTP/1.0.1/jsOTP.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --comcesa-blue: #003D7A;
+            --comcesa-dark: #001F3F;
+            --comcesa-light: #0066CC;
+            --comcesa-accent: #00A8E8;
+            --success: #00C853;
+            --warning: #FF6F00;
+            --danger: #D32F2F;
+            --bg: #F8F9FB;
+            --card: #FFFFFF;
+            --text: #1E293B;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+        }
+
+        body {
+            font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #F8F9FB 0%, #E8EDF5 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            background: linear-gradient(135deg, var(--comcesa-blue) 0%, var(--comcesa-dark) 100%);
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 61, 122, 0.25);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 168, 232, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-section {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo-section img {
+            max-width: 280px;
+            height: auto;
+            display: block;
+        }
+
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 1.5rem;
+            border-radius: 16px;
+            color: white;
+        }
+
+        .info-card h3 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            opacity: 0.85;
+            font-weight: 600;
+        }
+
+        .info-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ============ LOGIN ============ */
+        .login-screen {
+            max-width: 500px;
+            margin: 6rem auto;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-card {
+            background: var(--card);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+        }
+
+        .login-card .logo-center {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-card .logo-center img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .login-card h2 {
+            font-size: 1.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--comcesa-blue);
+            font-weight: 700;
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* ============ FORMS ============ */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Sora', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--comcesa-blue);
+            box-shadow: 0 0 0 4px rgba(0, 61, 122, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* ============ BUTTONS ============ */
+        .btn {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--comcesa-blue) 0%, var(--comcesa-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 61, 122, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--comcesa-blue);
+            border: 2px solid var(--comcesa-blue);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        /* ============ ALERTS ============ */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            display: none;
+            animation: slideInDown 0.4s ease;
+            font-weight: 500;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-warning {
+            background: #FFF3E0;
+            border-left: 4px solid var(--warning);
+            color: #E65100;
+        }
+
+        .alert-danger {
+            background: #FFEBEE;
+            border-left: 4px solid var(--danger);
+            color: #C62828;
+        }
+
+        .alert-success {
+            background: #E8F5E9;
+            border-left: 4px solid var(--success);
+            color: #2E7D32;
+        }
+
+        .alert-info {
+            background: #E3F2FD;
+            border-left: 4px solid var(--comcesa-light);
+            color: #1565C0;
+        }
+
+        /* ============ QR SETUP ============ */
+        .qr-setup-screen {
+            max-width: 650px;
+            margin: 4rem auto;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .qr-setup-card {
+            background: var(--card);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .qr-code-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            border: 3px dashed var(--border);
+            margin: 2rem auto;
+            display: inline-block;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .secret-key-display {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border: 3px solid var(--warning);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.375rem;
+            font-weight: 700;
+            color: var(--comcesa-dark);
+            letter-spacing: 2px;
+        }
+
+        .setup-steps {
+            text-align: left;
+            background: #F8F9FB;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+            border: 2px solid var(--border);
+        }
+
+        .setup-steps h3 {
+            color: var(--comcesa-blue);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .setup-steps ol {
+            margin-left: 1.75rem;
+        }
+
+        .setup-steps li {
+            margin-bottom: 0.875rem;
+            line-height: 1.8;
+        }
+
+        /* ============ MAIN SYSTEM ============ */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.25rem;
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--comcesa-blue) 0%, var(--comcesa-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.75rem;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(0, 61, 122, 0.3);
+        }
+
+        .user-details h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
+        .user-details p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            margin-left: auto;
+            padding: 0.625rem 1.75rem;
+            background: white;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* ============ NAV CARDS ============ */
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-card {
+            background: var(--card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--comcesa-blue) 0%, var(--comcesa-accent) 100%);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .nav-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 61, 122, 0.15);
+            border-color: var(--comcesa-blue);
+        }
+
+        .nav-card .icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--comcesa-blue) 0%, var(--comcesa-light) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 61, 122, 0.25);
+        }
+
+        .nav-card h3 {
+            font-size: 1.375rem;
+            margin-bottom: 0.5rem;
+            color: var(--comcesa-blue);
+            font-weight: 700;
+        }
+
+        .nav-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ============ ATTENDANCE SECTION ============ */
+        .attendance-section {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .attendance-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .attendance-btn {
+            padding: 2rem;
+            border-radius: 16px;
+            border: 3px solid var(--border);
+            background: linear-gradient(135deg, #F8F9FB 0%, #FFFFFF 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .attendance-btn:hover {
+            border-color: var(--comcesa-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 61, 122, 0.15);
+        }
+
+        .attendance-btn .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .attendance-btn h3 {
+            font-size: 1.25rem;
+            color: var(--comcesa-blue);
+            font-weight: 700;
+        }
+
+        .time-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--comcesa-blue);
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        /* ============ MODAL ============ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideUp 0.4s ease;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h2 {
+            color: var(--comcesa-blue);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============ ADMIN PANEL ============ */
+        .admin-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--comcesa-blue) 0%, var(--comcesa-dark) 100%);
+            color: white;
+            padding: 1.25rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .data-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:hover {
+            background: #F8F9FB;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .header-content {
+                grid-template-columns: 1fr;
+            }
+
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .attendance-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ============================================ -->
+        <!-- LOGIN PASO 1: Usuario -->
+        <!-- ============================================ -->
+        <div id="loginStep1" class="login-screen">
+            <div class="login-card">
+                <div class="logo-center">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.FWDv-1kVSpV5Dz_OMAu4IgHaBo?rs=1&pid=ImgDetMain&o=7&rm=3" alt="COMCESA">
+                </div>
+                <h2>Iniciar Sesión</h2>
+                <p>Ingresa tu usuario corporativo</p>
+                
+                <div id="alertStep1" class="alert"></div>
+                
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" id="usernameInput" placeholder="ejemplo: erick.garcia" autocomplete="username">
+                </div>
+                <button class="btn" onclick="checkUser()">Siguiente →</button>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- QR SETUP - Primera vez -->
+        <!-- ============================================ -->
+        <div id="qrSetupScreen" class="qr-setup-screen hidden">
+            <div class="qr-setup-card">
+                <h2 style="color: var(--comcesa-blue); margin-bottom: 1rem;">🔐 Configuración de Seguridad</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                    Primera vez en el sistema. Configura Google Authenticator en 3 pasos.
+                </p>
+
+                <div class="setup-steps">
+                    <h3>📱 Instrucciones:</h3>
+                    <ol>
+                        <li><strong>Descarga Google Authenticator</strong> (gratis en Play Store / App Store)</li>
+                        <li><strong>Abre la app</strong> y presiona "+" para agregar cuenta</li>
+                        <li><strong>Escanea este código QR:</strong></li>
+                    </ol>
+                </div>
+
+                <div class="qr-code-container">
+                    <div id="qrcode"></div>
+                </div>
+
+                <div style="background: #E3F2FD; padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0;">
+                    <p style="color: var(--comcesa-blue); font-weight: 600; margin-bottom: 0.5rem;">
+                        ⚠️ IMPORTANTE - Código de respaldo:
+                    </p>
+                    <div class="secret-key-display" id="secretKeyDisplay">
+                        XXXXXX
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">
+                        Guarda este código en un lugar seguro
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Ingresa el código de 6 dígitos de tu app:</label>
+                    <input type="text" id="setupVerificationCode" placeholder="000000" maxlength="6" 
+                           style="text-align: center; font-size: 1.75rem; letter-spacing: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <button class="btn" onclick="completeSetup()">✓ Completar Configuración</button>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- LOGIN PASO 2: Código -->
+        <!-- ============================================ -->
+        <div id="loginStep2" class="login-screen hidden">
+            <div class="login-card">
+                <div class="logo-center">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.FWDv-1kVSpV5Dz_OMAu4IgHaBo?rs=1&pid=ImgDetMain&o=7&rm=3" alt="COMCESA">
+                </div>
+                <h2>Autenticación</h2>
+                <p>Ingresa el código de Google Authenticator</p>
+                
+                <div id="alertStep2" class="alert"></div>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    <p style="color: var(--text-muted); margin-bottom: 0.5rem;">Usuario:</p>
+                    <p style="font-size: 1.375rem; font-weight: 700; color: var(--comcesa-blue);" id="displayUsername"></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Código de 6 dígitos</label>
+                    <input type="text" id="loginCode" placeholder="000000" maxlength="6" 
+                           style="text-align: center; font-size: 1.75rem; letter-spacing: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+                </div>
+                
+                <button class="btn" onclick="verifyLogin()">Ingresar al Sistema</button>
+                <button class="btn btn-secondary" onclick="backToUsername()" style="margin-top: 1rem;">← Cambiar Usuario</button>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- SISTEMA PRINCIPAL -->
+        <!-- ============================================ -->
+        <div id="mainSystem" class="hidden">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo-section">
+                        <img src="https://tse4.mm.bing.net/th/id/OIP.FWDv-1kVSpV5Dz_OMAu4IgHaBo?rs=1&pid=ImgDetMain&o=7&rm=3" alt="COMCESA">
+                    </div>
+                    <div class="info-section">
+                        <div class="info-card">
+                            <h3>Fecha</h3>
+                            <div class="value" id="currentDate">--</div>
+                        </div>
+                        <div class="info-card">
+                            <h3>Hora</h3>
+                            <div class="value" id="currentTime">--:--:--</div>
+                        </div>
+                        <div class="info-card">
+                            <h3>Clima - Guatemala</h3>
+                            <div class="value">
+                                <span id="temperature">24</span>°C ☀️
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">--</div>
+                <div class="user-details">
+                    <h3 id="userName">Usuario</h3>
+                    <p id="userRole">Cargo</p>
+                </div>
+                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            </div>
+
+            <!-- Navigation -->
+            <div id="mainMenu">
+                <div class="nav-cards">
+                    <div class="nav-card" onclick="showSection('attendance')">
+                        <div class="icon">⏰</div>
+                        <h3>Control de Asistencia</h3>
+                        <p>Marca tu entrada y salida diaria con precisión</p>
+                    </div>
+                    <div class="nav-card" onclick="showSection('vacations')">
+                        <div class="icon">🏖️</div>
+                        <h3>Solicitud de Vacaciones</h3>
+                        <p>Gestiona tus días de descanso y permisos</p>
+                    </div>
+                    <div class="nav-card" onclick="showSection('igss')">
+                        <div class="icon">🏥</div>
+                        <h3>Gestión IGSS</h3>
+                        <p>Registra citas y trámites médicos</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SECCIÓN: ASISTENCIA -->
+            <!-- ============================================ -->
+            <div id="attendanceSection" class="hidden">
+                <div class="attendance-section">
+                    <h2 style="color: var(--comcesa-blue); margin-bottom: 1rem; font-size: 2rem; font-weight: 700;">
+                        ⏰ Control de Asistencia
+                    </h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                        Registra tu entrada o salida del día
+                    </p>
+
+                    <div class="time-display" id="currentTimeDisplay">--:--:--</div>
+
+                    <div id="attendanceAlert" class="alert"></div>
+
+                    <div class="attendance-actions">
+                        <div class="attendance-btn" onclick="markAttendance('ENTRADA')">
+                            <div class="icon">🟢</div>
+                            <h3>Marcar Entrada</h3>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem;">Registrar llegada</p>
+                        </div>
+                        <div class="attendance-btn" onclick="markAttendance('SALIDA')">
+                            <div class="icon">🔴</div>
+                            <h3>Marcar Salida</h3>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem;">Registrar salida</p>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary" onclick="backToMenu()" style="margin-top: 2rem;">
+                        ← Volver al Menú
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SECCIÓN: VACACIONES -->
+            <!-- ============================================ -->
+            <div id="vacationsSection" class="hidden">
+                <div class="attendance-section">
+                    <h2 style="color: var(--comcesa-blue); margin-bottom: 1rem; font-size: 2rem; font-weight: 700;">
+                        🏖️ Solicitud de Vacaciones
+                    </h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                        Completa el formulario para solicitar tus días de descanso
+                    </p>
+
+                    <div id="vacationAlert" class="alert"></div>
+
+                    <form id="vacationForm">
+                        <div class="form-group">
+                            <label>Fecha de inicio</label>
+                            <input type="date" id="vacationStart" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Fecha de finalización</label>
+                            <input type="date" id="vacationEnd" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tipo de solicitud</label>
+                            <select id="vacationType" required>
+                                <option value="">Selecciona...</option>
+                                <option value="MEDIO_DIA">Medio día</option>
+                                <option value="DIA">1 día</option>
+                                <option value="VARIOS_DIAS">Varios días</option>
+                                <option value="SEMANA">Semana completa</option>
+                                <option value="QUINCENA">Quincena</option>
+                                <option value="MES">Mes</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Motivo / Observaciones (opcional)</label>
+                            <textarea id="vacationReason" placeholder="Escribe el motivo de tu solicitud..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn">Enviar Solicitud</button>
+                    </form>
+
+                    <button class="btn btn-secondary" onclick="backToMenu()" style="margin-top: 1rem;">
+                        ← Volver al Menú
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SECCIÓN: IGSS -->
+            <!-- ============================================ -->
+            <div id="igssSection" class="hidden">
+                <div class="attendance-section">
+                    <h2 style="color: var(--comcesa-blue); margin-bottom: 1rem; font-size: 2rem; font-weight: 700;">
+                        🏥 Gestión IGSS
+                    </h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                        Registra tus citas y trámites en el IGSS
+                    </p>
+
+                    <div id="igssAlert" class="alert"></div>
+
+                    <form id="igssForm">
+                        <div class="form-group">
+                            <label>Fecha de la cita</label>
+                            <input type="date" id="igssDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Hora de la cita</label>
+                            <input type="time" id="igssTime" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tipo de trámite</label>
+                            <select id="igssTramite" required>
+                                <option value="">Selecciona...</option>
+                                <option value="CONSULTA">Consulta médica</option>
+                                <option value="CITA_PROGRAMADA">Cita programada</option>
+                                <option value="MEDICINA">Recoger medicina</option>
+                                <option value="EXAMENES">Exámenes / laboratorio</option>
+                                <option value="OTROS">Otros trámites</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Lugar / Periférica</label>
+                            <input type="text" id="igssLugar" placeholder="Ej: Periférica Zona 11" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Número de constancia IGSS</label>
+                            <input type="text" id="igssConstancia" placeholder="Ej: 123456789">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Observaciones</label>
+                            <textarea id="igssObservaciones" placeholder="Detalles adicionales..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn">Registrar Cita IGSS</button>
+                    </form>
+
+                    <button class="btn btn-secondary" onclick="backToMenu()" style="margin-top: 1rem;">
+                        ← Volver al Menú
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para código 2FA -->
+    <div id="codeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCodeModal()">&times;</span>
+            <h2>🔐 Verificación de Seguridad</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                Para confirmar esta acción, ingresa tu código de Google Authenticator
+            </p>
+
+            <div id="modalAlert" class="alert"></div>
+
+            <div class="form-group">
+                <label>Código de 6 dígitos</label>
+                <input type="text" id="modalCode" placeholder="000000" maxlength="6"
+                       style="text-align: center; font-size: 1.75rem; letter-spacing: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+            </div>
+
+            <button class="btn" onclick="confirmAction()">Confirmar</button>
+            <button class="btn btn-secondary" onclick="closeCodeModal()" style="margin-top: 0.75rem;">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw46QXteb6W5xYdsbbwr30Iq7aD_IkC8HJNoyVFRTYnmZThQFy29nl8e1K-BsnzsdkAAQ/exec'; // 
+        
+        const MODO_DEMO = !GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === '';
+
+        // ============================================
+        // BASE DE DATOS EMBEBIDA (MODO DEMO)
+        // ============================================
+        
+        const USUARIOS_DB = {
+            'erick.garcia': {
+                nombre: 'Erick Josué García Solares',
+                rol: 'ADMIN',
+                puesto: 'Soporte Admin',
+                correo: 'csr@comcesa.net',
+                horario: { entrada_lj: '07:00', salida_lj: '17:00', entrada_v: '07:00', salida_v: '16:00' },
+                supervisor: null,
+                secret: 'JBSWY3DPEHPK3PXP' // Demo secret
+            },
+            'bdelaroca': {
+                nombre: 'Aida Bethzabé De La Roca',
+                rol: 'ADMIN',
+                puesto: 'Gerente Admin/Financiero',
+                correo: 'bdelaroca@comcesa.net',
+                horario: { entrada_lj: '07:00', salida_lj: '17:00', entrada_v: '07:00', salida_v: '16:00' },
+                supervisor: null,
+                secret: null
+            },
+            'ricardo.widmann': {
+                nombre: 'Ricardo Widmann',
+                rol: 'ADMIN',
+                puesto: 'Gerente General',
+                correo: 'ricardo@comcesa.net',
+                horario: { entrada_lj: '08:00', salida_lj: '18:00', entrada_v: '08:00', salida_v: '17:00' },
+                supervisor: null,
+                secret: null
+            },
+            'walter.widmann': {
+                nombre: 'Walter Widmann',
+                rol: 'ADMIN',
+                puesto: 'Gerente General',
+                correo: 'walter@comcesa.net',
+                horario: { entrada_lj: '08:00', salida_lj: '18:00', entrada_v: '08:00', salida_v: '17:00' },
+                supervisor: null,
+                secret: null
+            },
+            'yanira.lopez': {
+                nombre: 'Karla Yanira López López',
+                rol: 'EMPLEADO',
+                puesto: 'Facturación y Recepción',
+                correo: 'yanira@comcesa.net',
+                horario: { entrada_lj: '07:30', salida_lj: '17:30', entrada_v: '07:30', salida_v: '16:30' },
+                supervisor: 'josue.rodriguez',
+                secret: null
+            },
+            'teresa.aifan': {
+                nombre: 'Teresa de Jesús Aifán Romero',
+                rol: 'EMPLEADO',
+                puesto: 'Mantenimiento',
+                correo: '',
+                horario: { entrada_lj: '07:30', salida_lj: '17:30', entrada_v: '07:30', salida_v: '16:30' },
+                supervisor: 'bdelaroca',
+                secret: null
+            },
+            'roniel.chacon': {
+                nombre: 'Roniel Oswaldo Chacón García',
+                rol: 'SUPERVISOR',
+                puesto: 'Jefe de Bodega',
+                correo: 'roniel@comcesa.net',
+                horario: { entrada_lj: '08:00', salida_lj: '18:00', entrada_v: '08:00', salida_v: '17:00' },
+                supervisor: 'bdelaroca',
+                secret: null
+            },
+            'josue.rodriguez': {
+                nombre: 'Josué Alejandro Rodríguez Mejía',
+                rol: 'SUPERVISOR',
+                puesto: 'Jefe de Ventas',
+                correo: 'josue@comcesa.net',
+                horario: { entrada_lj: '08:00', salida_lj: '18:00', entrada_v: '08:00', salida_v: '17:00' },
+                supervisor: 'bdelaroca',
+                secret: null
+            }
+        };
+
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        let currentUsername = '';
+        let currentUser = null;
+        let pendingAction = null;
+
+        // ============================================
+        // PASO 1: VERIFICAR USUARIO
+        // ============================================
+        
+        async function checkUser() {
+            const username = document.getElementById('usernameInput').value.trim().toLowerCase();
+            
+            if (!username) {
+                showAlert('Por favor ingresa tu usuario', 'danger', 'alertStep1');
+                return;
+            }
+
+            currentUsername = username;
+            
+            if (MODO_DEMO) {
+                // Modo demo - verificar contra DB embebida
+                if (USUARIOS_DB[username]) {
+                    const user = USUARIOS_DB[username];
+                    
+                    // Verificar si ya tiene secret configurado
+                    const setupComplete = localStorage.getItem(`user_${username}_setup_complete`);
+                    
+                    if (!user.secret || !setupComplete) {
+                        showQRSetup();
+                    } else {
+                        showLoginStep2();
+                    }
+                } else {
+                    showAlert('Usuario no encontrado en el sistema', 'danger', 'alertStep1');
+                }
+            } else {
+                // Modo producción - llamar a Google Apps Script
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'checkUser', username: username })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.exists) {
+                        if (result.needsSetup) {
+                            showQRSetup();
+                        } else {
+                            showLoginStep2();
+                        }
+                    } else {
+                        showAlert('Usuario no encontrado', 'danger', 'alertStep1');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert('Error de conexión. Verifica tu internet.', 'danger', 'alertStep1');
+                }
+            }
+        }
+
+        // ============================================
+        // PASO 2: MOSTRAR QR SETUP
+        // ============================================
+        
+        function showQRSetup() {
+            const secret = generateSecret();
+            
+            // Guardar secret temporalmente
+            if (MODO_DEMO) {
+                localStorage.setItem(`user_${currentUsername}_secret`, secret);
+            }
+            
+            // Mostrar secret formateado
+            document.getElementById('secretKeyDisplay').textContent = formatSecret(secret);
+            
+            // Generar QR
+            const otpauthUrl = `otpauth://totp/COMCESA:${currentUsername}?secret=${secret}&issuer=COMCESA`;
+            document.getElementById('qrcode').innerHTML = '';
+            
+            new QRCode(document.getElementById('qrcode'), {
+                text: otpauthUrl,
+                width: 256,
+                height: 256,
+                colorDark: '#003D7A',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Cambiar pantalla
+            document.getElementById('loginStep1').classList.add('hidden');
+            document.getElementById('qrSetupScreen').classList.remove('hidden');
+        }
+
+        // ============================================
+        // COMPLETAR SETUP
+        // ============================================
+        
+        async function completeSetup() {
+            const code = document.getElementById('setupVerificationCode').value.trim();
+            
+            if (code.length !== 6) {
+                showAlert('El código debe tener 6 dígitos', 'danger', 'alertStep2');
+                return;
+            }
+
+            const secret = localStorage.getItem(`user_${currentUsername}_secret`);
+            
+            if (MODO_DEMO) {
+                // Simular validación (en demo siempre acepta cualquier código de 6 dígitos)
+                showAlert('✅ Configuración completada!', 'success', 'alertStep2');
+                
+                localStorage.setItem(`user_${currentUsername}_setup_complete`, 'true');
+                USUARIOS_DB[currentUsername].secret = secret;
+                
+                setTimeout(() => {
+                    proceedToSystem();
+                }, 1500);
+            } else {
+                // Modo producción
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'completeSetup',
+                            username: currentUsername,
+                            secret: secret,
+                            code: code
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showAlert('✅ Configuración completada!', 'success', 'alertStep2');
+                        setTimeout(() => proceedToSystem(), 1500);
+                    } else {
+                        showAlert('Código incorrecto', 'danger', 'alertStep2');
+                    }
+                } catch (error) {
+                    showAlert('Error de conexión', 'danger', 'alertStep2');
+                }
+            }
+        }
+
+        // ============================================
+        // LOGIN PASO 2
+        // ============================================
+        
+        function showLoginStep2() {
+            document.getElementById('displayUsername').textContent = currentUsername;
+            document.getElementById('loginStep1').classList.add('hidden');
+            document.getElementById('loginStep2').classList.remove('hidden');
+        }
+
+        async function verifyLogin() {
+            const code = document.getElementById('loginCode').value.trim();
+            
+            if (code.length !== 6) {
+                showAlert('El código debe tener 6 dígitos', 'danger', 'alertStep2');
+                return;
+            }
+
+            if (MODO_DEMO) {
+                // En modo demo, aceptar cualquier código de 6 dígitos
+                proceedToSystem();
+            } else {
+                // Modo producción - verificar con Google Apps Script
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'login',
+                            username: currentUsername,
+                            code: code
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        currentUser = result.user;
+                        proceedToSystem();
+                    } else {
+                        showAlert('Código incorrecto', 'danger', 'alertStep2');
+                    }
+                } catch (error) {
+                    showAlert('Error de conexión', 'danger', 'alertStep2');
+                }
+            }
+        }
+
+        // ============================================
+        // ENTRAR AL SISTEMA
+        // ============================================
+        
+        function proceedToSystem() {
+            if (MODO_DEMO) {
+                currentUser = USUARIOS_DB[currentUsername];
+            }
+
+            // Guardar sesión
+            localStorage.setItem('currentSession', JSON.stringify({
+                username: currentUsername,
+                timestamp: new Date().getTime()
+            }));
+
+            // Mostrar sistema
+            document.getElementById('loginStep1').classList.add('hidden');
+            document.getElementById('loginStep2').classList.add('hidden');
+            document.getElementById('qrSetupScreen').classList.add('hidden');
+            document.getElementById('mainSystem').classList.remove('hidden');
+
+            // Actualizar UI
+            const initials = currentUsername.split('.')[0].substring(0, 2).toUpperCase();
+            document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('userName').textContent = currentUser.nombre;
+            document.getElementById('userRole').textContent = currentUser.puesto;
+
+            // Iniciar reloj
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        }
+
+        // ============================================
+        // NAVEGACIÓN
+        // ============================================
+        
+        function showSection(section) {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('attendanceSection').classList.add('hidden');
+            document.getElementById('vacationsSection').classList.add('hidden');
+            document.getElementById('igssSection').classList.add('hidden');
+            
+            document.getElementById(section + 'Section').classList.remove('hidden');
+            
+            if (section === 'attendance') {
+                updateAttendanceTime();
+                setInterval(updateAttendanceTime, 1000);
+            }
+        }
+
+        function backToMenu() {
+            document.getElementById('mainMenu').classList.remove('hidden');
+            document.getElementById('attendanceSection').classList.add('hidden');
+            document.getElementById('vacationsSection').classList.add('hidden');
+            document.getElementById('igssSection').classList.add('hidden');
+        }
+
+        // ============================================
+        // ASISTENCIA
+        // ============================================
+        
+        async function markAttendance(tipo) {
+            pendingAction = { type: 'attendance', data: tipo };
+            document.getElementById('codeModal').classList.add('show');
+        }
+
+        async function confirmAction() {
+            const code = document.getElementById('modalCode').value.trim();
+            
+            if (code.length !== 6) {
+                showAlert('Código de 6 dígitos requerido', 'danger', 'modalAlert');
+                return;
+            }
+
+            if (!pendingAction) return;
+
+            if (pendingAction.type === 'attendance') {
+                await processAttendance(pendingAction.data, code);
+            } else if (pendingAction.type === 'vacation') {
+                await processVacation(pendingAction.data, code);
+            } else if (pendingAction.type === 'igss') {
+                await processIGSS(pendingAction.data, code);
+            }
+        }
+
+        async function processAttendance(tipo, code) {
+            const now = new Date();
+            const hora = now.toTimeString().split(' ')[0];
+            const fecha = now.toISOString().split('T')[0];
+            const diaSemana = now.getDay(); // 0 = Domingo, 5 = Viernes
+            
+            // Obtener horario del usuario
+            const horario = currentUser.horario;
+            const horaEsperada = (diaSemana === 5) 
+                ? (tipo === 'ENTRADA' ? horario.entrada_v : horario.salida_v)
+                : (tipo === 'ENTRADA' ? horario.entrada_lj : horario.salida_lj);
+            
+            // Calcular diferencia en minutos
+            const minutosActual = parseInt(hora.split(':')[0]) * 60 + parseInt(hora.split(':')[1]);
+            const minutosEsperado = parseInt(horaEsperada.split(':')[0]) * 60 + parseInt(horaEsperada.split(':')[1]);
+            const diferencia = minutosActual - minutosEsperado;
+
+            if (MODO_DEMO) {
+                // Guardar en localStorage
+                const registros = JSON.parse(localStorage.getItem('asistencia') || '[]');
+                registros.push({
+                    fecha,
+                    username: currentUsername,
+                    tipo,
+                    hora,
+                    minutos_diff: diferencia
+                });
+                localStorage.setItem('asistencia', JSON.stringify(registros));
+
+                // Mostrar alerta
+                closeCodeModal();
+                let mensaje = `${tipo} marcada a las ${hora}`;
+                let alertType = 'success';
+                
+                if (tipo === 'ENTRADA' && diferencia > 0) {
+                    mensaje += ` ⏰ Llegaste ${diferencia} minutos tarde`;
+                    alertType = 'warning';
+                } else if (tipo === 'SALIDA' && diferencia < 0) {
+                    mensaje += ` ⏰ Sales ${Math.abs(diferencia)} minutos antes`;
+                    alertType = 'warning';
+                }
+                
+                showAlert(mensaje, alertType, 'attendanceAlert');
+            } else {
+                // Modo producción - enviar a Google Sheets
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'markAttendance',
+                            username: currentUsername,
+                            tipo,
+                            code
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        closeCodeModal();
+                        showAlert(result.message, result.alertType || 'success', 'attendanceAlert');
+                    } else {
+                        showAlert('Código incorrecto', 'danger', 'modalAlert');
+                    }
+                } catch (error) {
+                    showAlert('Error de conexión', 'danger', 'modalAlert');
+                }
+            }
+        }
+
+        // ============================================
+        // VACACIONES
+        // ============================================
+        
+        document.getElementById('vacationForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const data = {
+                start: document.getElementById('vacationStart').value,
+                end: document.getElementById('vacationEnd').value,
+                type: document.getElementById('vacationType').value,
+                reason: document.getElementById('vacationReason').value
+            };
+            
+            pendingAction = { type: 'vacation', data };
+            document.getElementById('codeModal').classList.add('show');
+        });
+
+        async function processVacation(data, code) {
+            if (MODO_DEMO) {
+                // Guardar solicitud
+                const solicitudes = JSON.parse(localStorage.getItem('vacaciones') || '[]');
+                solicitudes.push({
+                    id: Date.now(),
+                    username: currentUsername,
+                    ...data,
+                    estado: 'PENDIENTE',
+                    fecha_solicitud: new Date().toISOString()
+                });
+                localStorage.setItem('vacaciones', JSON.stringify(solicitudes));
+
+                closeCodeModal();
+                showAlert('✅ Solicitud enviada. Se notificó a tu supervisor.', 'success', 'vacationAlert');
+                
+                // Limpiar formulario
+                document.getElementById('vacationForm').reset();
+            } else {
+                // Enviar a Google Apps Script
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'requestVacation',
+                            username: currentUsername,
+                            ...data,
+                            code
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        closeCodeModal();
+                        showAlert(result.message, 'success', 'vacationAlert');
+                        document.getElementById('vacationForm').reset();
+                    } else {
+                        showAlert('Código incorrecto', 'danger', 'modalAlert');
+                    }
+                } catch (error) {
+                    showAlert('Error de conexión', 'danger', 'modalAlert');
+                }
+            }
+        }
+
+        // ============================================
+        // IGSS
+        // ============================================
+        
+        document.getElementById('igssForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const data = {
+                fecha: document.getElementById('igssDate').value,
+                hora: document.getElementById('igssTime').value,
+                tramite: document.getElementById('igssTramite').value,
+                lugar: document.getElementById('igssLugar').value,
+                constancia: document.getElementById('igssConstancia').value,
+                observaciones: document.getElementById('igssObservaciones').value
+            };
+            
+            pendingAction = { type: 'igss', data };
+            document.getElementById('codeModal').classList.add('show');
+        });
+
+        async function processIGSS(data, code) {
+            if (MODO_DEMO) {
+                const registros = JSON.parse(localStorage.getItem('igss') || '[]');
+                registros.push({
+                    username: currentUsername,
+                    ...data,
+                    fecha_registro: new Date().toISOString()
+                });
+                localStorage.setItem('igss', JSON.stringify(registros));
+
+                closeCodeModal();
+                showAlert('✅ Cita IGSS registrada correctamente', 'success', 'igssAlert');
+                document.getElementById('igssForm').reset();
+            } else {
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'registerIGSS',
+                            username: currentUsername,
+                            ...data,
+                            code
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        closeCodeModal();
+                        showAlert(result.message, 'success', 'igssAlert');
+                        document.getElementById('igssForm').reset();
+                    } else {
+                        showAlert('Código incorrecto', 'danger', 'modalAlert');
+                    }
+                } catch (error) {
+                    showAlert('Error de conexión', 'danger', 'modalAlert');
+                }
+            }
+        }
+
+        // ============================================
+        // UTILIDADES
+        // ============================================
+        
+        function generateSecret() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+            let secret = '';
+            for (let i = 0; i < 32; i++) {
+                secret += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return secret;
+        }
+
+        function formatSecret(secret) {
+            return secret.match(/.{1,4}/g).join(' ');
+        }
+
+        function showAlert(message, type, elementId) {
+            const alert = document.getElementById(elementId);
+            if (alert) {
+                alert.className = `alert alert-${type} show`;
+                alert.textContent = message;
+                setTimeout(() => alert.classList.remove('show'), 5000);
+            }
+        }
+
+        function backToUsername() {
+            document.getElementById('loginStep2').classList.add('hidden');
+            document.getElementById('loginStep1').classList.remove('hidden');
+            document.getElementById('loginCode').value = '';
+        }
+
+        function logout() {
+            if (confirm('¿Cerrar sesión?')) {
+                localStorage.removeItem('currentSession');
+                location.reload();
+            }
+        }
+
+        function closeCodeModal() {
+            document.getElementById('codeModal').classList.remove('show');
+            document.getElementById('modalCode').value = '';
+            pendingAction = null;
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('es-GT', options);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('es-GT', { hour12: false });
+        }
+
+        function updateAttendanceTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-GT', { hour12: false });
+            const display = document.getElementById('currentTimeDisplay');
+            if (display) {
+                display.textContent = timeString;
+            }
+        }
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            // Verificar sesión existente
+            const session = localStorage.getItem('currentSession');
+            if (session) {
+                const sessionData = JSON.parse(session);
+                const hoursSinceLogin = (new Date().getTime() - sessionData.timestamp) / (1000 * 60 * 60);
+                
+                // Sesión válida por 8 horas
+                if (hoursSinceLogin < 8) {
+                    currentUsername = sessionData.username;
+                    
+                    if (MODO_DEMO && USUARIOS_DB[currentUsername]) {
+                        currentUser = USUARIOS_DB[currentUsername];
+                        proceedToSystem();
+                    }
+                } else {
+                    localStorage.removeItem('currentSession');
+                }
+            }
+
+            // Mostrar modo en consola
+            if (MODO_DEMO) {
+                console.log('%c🚀 SISTEMA EN MODO DEMO', 'color: #00A8E8; font-size: 16px; font-weight: bold;');
+                console.log('%cUsuarios disponibles:', 'color: #003D7A; font-weight: bold;');
+                Object.keys(USUARIOS_DB).forEach(user => {
+                    console.log(`  • ${user} - ${USUARIOS_DB[user].nombre}`);
+                });
+                console.log('%cPuedes usar cualquier código de 6 dígitos para login', 'color: #FF6F00;');
+            }
+        });
+    </script>
+</body>
+</html>
